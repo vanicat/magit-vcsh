@@ -89,5 +89,10 @@ are bind dynamicly."
   (magit-vcsh-set-env name t
       (magit-status "/")))
 
+(defadvice magit-git-string (around magit-vcsh-git-string (&rest ARGS))
+  (let ((process-environment process-environment))
+    ad-do-it))
+
+(ad-activate 'magit-git-string)
 
 (provide 'magit-vcsh)
