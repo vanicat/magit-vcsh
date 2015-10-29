@@ -46,6 +46,9 @@
         (magit-git-standard-options ()))
     (apply 'magit-git-string args)))
 
+(defun magit-vcsh-get-worktree (name)
+  (magit-vcsh-string "run" name "git" "config" "core.worktree"))
+
 (defun magit-vcsh-get-env (name)
   "get env from vcsh.
 
@@ -87,7 +90,7 @@ are bind dynamicly."
   (interactive "Mvcsh repos: ")
 
   (magit-vcsh-set-env name t
-      (magit-status "/")))
+      (magit-status (magit-vcsh-get-worktree name))))
 
 (defadvice magit-git-string (around magit-vcsh-git-string (&rest ARGS))
   (let ((process-environment process-environment))
