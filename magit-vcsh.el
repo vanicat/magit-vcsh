@@ -41,8 +41,6 @@
 (put 'magit-vcsh-env 'permanent-local t)
 (defvar magit-vcsh-env*)
 
-(defvar magit-vcsh-process-environment)
-
 (defun magit-vcsh-string (&rest args)
   (let ((magit-git-executable magit-vcsh-executable)
         (magit-git-standard-options ()))
@@ -80,7 +78,6 @@ are bind dynamicly."
            (debug (symbolp symbolp
                            def-body)))
   `(let* ((magit-vcsh-env* (magit-vcsh-get-env ,name))
-          (magit-vcsh-process-environment (append magit-vcsh-env* process-environment))
           (process-environment (append magit-vcsh-env* process-environment))
           (magit-vcsh-name* ,name)
           (magit-status-buffer-name-format (format "*magit-vsch: %s %%a" ,name)))
@@ -96,8 +93,8 @@ are bind dynamicly."
 
 (defun magit-vcsh-set-env-advice (oldfun &rest r)
   (let ((old-process process-environment))
-    (when (boundp 'magit-vcsh-process-environment)
-      (setq process-environment magit-vcsh-process-environment))
+    (when magit-vcsh-env
+      (setq process-environment (append magit-vcsh-env process-environment)))
     (unwind-protect
         (apply oldfun r)
       (setq process-environment old-process))))
