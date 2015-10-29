@@ -100,6 +100,8 @@ are bind dynamicly."
       (setq process-environment old-process))))
 
 (advice-add 'magit-git-str :around 'magit-vcsh-set-env-advice)
+(advice-add 'magit-git-string :around 'magit-vcsh-set-env-advice)
+(advice-add 'magit-git-lines :around 'magit-vcsh-set-env-advice)
 (advice-add 'magit-git-exit-code :around 'magit-vcsh-set-env-advice)
 (advice-add 'magit-git-insert :around 'magit-vcsh-set-env-advice)
 (advice-add 'magit-patch-id :around 'magit-vcsh-set-env-advice)
