@@ -51,7 +51,7 @@
 (defun magit-vcsh-get-worktree (name)
   (magit-vcsh-string "run" name "git" "config" "core.worktree"))
 
-(defun magit-vcsh-get-env (name)
+(defun magit-vcsh-get-environment (name)
   "get env from vcsh.
 
 Return it in a form switable to append to `process-environment'"
@@ -74,32 +74,46 @@ are bind dynamicly."
 
 (add-hook 'magit-mode-hook 'magit-vcsh-for-magit-hook)
 
-(defmacro magit-vcsh-set-env (name new-buffer &rest body)
-  "Run BODY with correct environement"
-  (declare (indent defun)
-           (debug (symbolp symbolp
-                           def-body)))
-  `(let* ((magit-vcsh-env* (magit-vcsh-get-env ,name))
-          (process-environment (append magit-vcsh-env* process-environment))
-          (magit-vcsh-name* ,name)
-          (magit-status-buffer-name-format (format "*magit-vsch: %s %%a" ,name)))
-     (progn ,@body)))
+(defmacro magit-vcsh-set-env (name &rest body)
+  "Run BODY with correct environement
+
+if NAME is nil, then it will use `magit-vcsh-name' and `magit-vcsh-env' that must be set
+if NAME not nil, it is a name of a vcsh repos"
+  (declare (debug (body)))
+  (let ((process (cl-gensym "process"))
+        (status-format (cl-gensym "status-format"))
+        (process-format (cl-gensym "process-format"))
+        (namesym (cl-gensym "name")))
+    `(let* ((,namesym ,name)
+            (magit-vcsh-env* (if ,namesym
+                                 (magit-vcsh-get-environment ,namesym)
+                               magit-vcsh-env))
+            (magit-vcsh-name* (or ,namesym
+                                  magit-vcsh-name))
+            (,process process-environment)
+            (,status-format magit-status-buffer-name-format)
+            (,process-format magit-process-buffer-name-format))
+       (unwind-protect
+           (progn
+             (setq process-environment (append magit-vcsh-env* process-environment))
+             (setq magit-status-buffer-name-format (format "*magit-vsch: %s %%a" magit-vcsh-name*))
+             (setq magit-process-buffer-name-format (format "*magit-process-vsch: %s %%a" magit-vcsh-name*))
+             ,@body)
+         (setq process-environment ,process)
+         (setq magit-status-buffer-name-format ,status-format)
+         (setq magit-process-buffer-name-format ,process-format)))))
 
 ;;;###autoload
 (defun magit-vcsh-status (name)
   "Get the magit-status buffer of a vcsh repository."
   (interactive "Mvcsh repos: ")
-
-  (magit-vcsh-set-env name t
-      (magit-status (magit-vcsh-get-worktree name))))
+  (magit-vcsh-set-env name
+    (magit-status (magit-vcsh-get-worktree name))))
 
 (defun magit-vcsh-set-env-advice (oldfun &rest r)
-  (let ((old-process process-environment))
-    (when magit-vcsh-env
-      (setq process-environment (append magit-vcsh-env process-environment)))
-    (unwind-protect
-        (apply oldfun r)
-      (setq process-environment old-process))))
+  (if magit-vcsh-env
+      (magit-vcsh-set-env nil (apply oldfun r))
+    (apply oldfun r)))
 
 (advice-add 'magit-git-str :around 'magit-vcsh-set-env-advice)
 (advice-add 'magit-git-string :around 'magit-vcsh-set-env-advice)
