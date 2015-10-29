@@ -121,5 +121,6 @@ if NAME not nil, it is a name of a vcsh repos"
 (advice-add 'magit-git-exit-code :around 'magit-vcsh-set-env-advice)
 (advice-add 'magit-git-insert :around 'magit-vcsh-set-env-advice)
 (advice-add 'magit-patch-id :around 'magit-vcsh-set-env-advice)
+(advice-add 'magit-process-setup :around 'magit-vcsh-set-env-advice)
 
 (provide 'magit-vcsh)
