@@ -21,6 +21,8 @@
 ;; Magit.
 
 ;;; Code:
+(require magit-git)
+
 (defgroup magit-vcsh nil
   "Controlling Vcsh from Emacs."
   :prefix "magit-vcsh"
