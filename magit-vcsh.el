@@ -4,7 +4,7 @@
 
 ;; Author: Rémi Vanicat <vanicat@debian.org>
 
-;; Package-Requires: ((emacs "24.4") (magit "2.2.2"))
+;; Package-Requires: ((emacs "24.4") (magit "2.3.0"))
 ;; Keywords: tools
 ;; Homepage: https://github.com/magit/magit
 ;; Version: 0.2
@@ -89,8 +89,7 @@ if NAME is nil, then it will use `magit-vcsh-name' and `magit-vcsh-env' that mus
 if NAME not nil, it is a name of a vcsh repos"
   (declare (debug (body)))
   (let ((process (cl-gensym "process"))
-        (status-format (cl-gensym "status-format"))
-        (process-format (cl-gensym "process-format"))
+        (name-format (cl-gensym "name-format"))
         (namesym (cl-gensym "name")))
     `(let* ((,namesym ,name)
             (magit-vcsh-env* (if ,namesym
@@ -99,17 +98,14 @@ if NAME not nil, it is a name of a vcsh repos"
             (magit-vcsh-name* (or ,namesym
                                   magit-vcsh-name))
             (,process process-environment)
-            (,status-format magit-status-buffer-name-format)
-            (,process-format magit-process-buffer-name-format))
+            (,name-format magit-buffer-name-format))
        (unwind-protect
            (progn
              (setq process-environment (append magit-vcsh-env* process-environment))
-             (setq magit-status-buffer-name-format (format "*magit-vsch: %s %%a" magit-vcsh-name*))
-             (setq magit-process-buffer-name-format (format "*magit-process-vsch: %s %%a" magit-vcsh-name*))
+             (setq magit-buffer-name-format (format "*vcsh%%v: %s, %%M%%v: %%t*" magit-vcsh-name*))
              ,@body)
          (setq process-environment ,process)
-         (setq magit-status-buffer-name-format ,status-format)
-         (setq magit-process-buffer-name-format ,process-format)))))
+         (setq magit-buffer-name-format ,name-format)))))
 
 ;;;###autoload
 (defun magit-vcsh-status (name)
