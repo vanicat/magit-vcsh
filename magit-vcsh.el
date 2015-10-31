@@ -119,13 +119,26 @@ if NAME not nil, it is a name of a vcsh repos"
       (magit-vcsh-set-env nil (apply oldfun r))
     (apply oldfun r)))
 
+;;; The following advice are needed mostly for function
+;;; that create new buffer or that call git.
+
 (advice-add 'magit-git-str :around 'magit-vcsh-set-env-advice)
 (advice-add 'magit-git-string :around 'magit-vcsh-set-env-advice)
 (advice-add 'magit-git-lines :around 'magit-vcsh-set-env-advice)
+(advice-add 'magit-git-items :around 'magit-vcsh-set-env-advice)
+(advice-add 'magit-file-status :around 'magit-vcsh-set-env-advice)
 (advice-add 'magit-git-exit-code :around 'magit-vcsh-set-env-advice)
 (advice-add 'magit-git-insert :around 'magit-vcsh-set-env-advice)
 (advice-add 'magit-patch-id :around 'magit-vcsh-set-env-advice)
 (advice-add 'magit-process-setup :around 'magit-vcsh-set-env-advice)
+(advice-add 'magit-process-file :around 'magit-vcsh-set-env-advice)
+(advice-add 'magit-start-process :around 'magit-vcsh-set-env-advice)
+(advice-add 'magit-apply-patch :around 'magit-vcsh-set-env-advice)
+(advice-add 'magit-reset-internal :around 'magit-vcsh-set-env-advice)
+(advice-add 'magit-git-command :around 'magit-vcsh-set-env-advice)
+(advice-add 'magit-shell-command :around 'magit-vcsh-set-env-advice)
+(advice-add 'magit-stash-save :around 'magit-vcsh-set-env-advice)
+
 
 (provide 'magit-vcsh)
 
