@@ -1,6 +1,6 @@
 ;;; magit-vcsh.el --- git-vcsh plug-in for Magit
 
-;; Copyright (C) 2013 Rémi Vanicat
+;; Copyright (C) 2013, 2015 Rémi Vanicat
 
 ;; Magit is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
