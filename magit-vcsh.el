@@ -6,7 +6,7 @@
 
 ;; Package-Requires: ((emacs "24.4") (magit "2.3.0"))
 ;; Keywords: tools
-;; Homepage: https://github.com/magit/magit
+;; Homepage: https://github.com/vanicat/magit-vcsh
 ;; Version: 0.2
 
 ;; Magit-vcsh is free software; you can redistribute it and/or modify it
