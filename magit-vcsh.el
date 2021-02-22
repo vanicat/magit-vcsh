@@ -107,10 +107,16 @@ if NAME not nil, it is a name of a vcsh repos"
          (setq process-environment ,process)
          (setq magit-buffer-name-format ,name-format)))))
 
+(defun vcsh-repos ()
+  "Executes the command 'vcsh list' and parse the result into a list"
+  (split-string (shell-command-to-string "vcsh list")))
+
 ;;;###autoload
 (defun magit-vcsh-status (name)
   "Get the magit-status buffer of a vcsh repository."
-  (interactive "Mvcsh repos: ")
+  (interactive
+   (list
+    (completing-read "vcsh repos: " (vcsh-repos))))
   (magit-vcsh-set-env name
     (magit-status (magit-vcsh-get-worktree name))))
 
